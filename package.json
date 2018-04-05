@@ -1,0 +1,15 @@
+{
+  "name": "greeting",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "ava": "0.25.0"
+  },
+  "scripts": {
+    "test": "nyc ava"
+  },
+  "devDependencies": {
+    "nyc": "11.4.1"
+  }
+}
