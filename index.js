@@ -1,16 +1,15 @@
-
 /**
  * @param {String} name 
  * @returns {String} Greeting
  */
-function greet(name = "my friend") {
-    if(Array.isArray(name)) {
-        return `Hello, ${group(name)}.`
+function greet(names = "my friend") {
+    if(Array.isArray(names)) {
+        return `Hello, ${greetGroup(names)}`;
     }
-    if(isShouting(name)){
-        return `HELLO, ${name}!`;
-    }
-    return `Hello, ${name}.`;
+    if(isShouting(names)){
+        return `HELLO, ${names}!`;
+    }  
+    return `Hello, ${names}.`;
 }
 
 /**
@@ -23,19 +22,31 @@ function isShouting(message) {
 }
 
 /**
+ * TODO FIX THIS MESS.
+ */
+
+/**
  * 
  * @param {Array} names 
  * @returns {String}
  */
-function group(names) {
-    const parsed_names = normaliseNames(names)
-    return parsed_names.reduce((sum, el, index) => {
-        if(parsed_names.length - 1 === index) {
-            return oxfordComma(parsed_names.length === 2, sum, el);
+function greetGroup(names) {
+    const parsed_names = normaliseNames(names);
+    const lowerCaseNames = parsed_names.filter(name=>!isShouting(name));
+    const quietGreeting = lowerCaseNames.reduce((sum, el, index) => {
+        if(lowerCaseNames.length - 1 === index) {
+            return oxfordComma(lowerCaseNames.length === 2, sum, el);
         }
         return `${sum}, ${el}`;
-    })
+    }) + '.'
+    if(parsed_names.some(isShouting)) {
+        const upperCaseNames = names.filter(name=>isShouting(name));
+        return `${quietGreeting} AND HELLO ${upperCaseNames}!`
+    }
+    return quietGreeting;
+
 }
+
 
 /**
  * 
@@ -57,24 +68,24 @@ function oxfordComma(shouldOxford, previous, lastname) {
  * @returns {Array} normalisedNames
  */
 function normaliseNames(names) {
-    return names.reduce((group, name) => {
+    return names.reduce((greetGroup, name) => {
         if (name.indexOf('"') !==-1) {
-            group.push(name.replace(/"/g,''))
+            greetGroup.push(name.replace(/"/g,''))
         }
         else if (name.indexOf(',') !== -1) {
-            group.push(...name.split(',').map(el=>el.trim()));
+            greetGroup.push(...name.split(',').map(el=>el.trim()));
             
         } else {
-            group.push(name)
+            greetGroup.push(name)
         }
-        return group
+        return greetGroup
     },[])
 }
 
 module.exports = {
     greet,
     isShouting,
-    group,
+    greetGroup,
     oxfordComma,
     normaliseNames
 };

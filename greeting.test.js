@@ -1,5 +1,5 @@
 const test = require('ava');
-const {greet, isShouting, group, oxfordComma, normaliseNames} = require('./index');
+const {greet, isShouting, greetGroup, oxfordComma, normaliseNames} = require('./index');
 
 /**
  * Requirement 1
@@ -82,14 +82,14 @@ test('Greeting can parse weird strings', t => {
     t.is(greeting, "Hello, Bob, Charlie, and Dianne.")
 });
 
-test('Group splits array of 2 names into string delimited by and', t => {
-    const names = group(["Test", "Test"]);
-    t.is(names, "Test and Test");
+test('greetGroup splits array of 2 names into string delimited by and', t => {
+    const names = greetGroup(["Test", "Test"]);
+    t.is(names, "Test and Test.");
 });
 
-test('Group splits array of 3 or mote names into string delimited by , and the last name by , and', t => {
-    const names = group(["Test", "Test", "Test"]);
-    t.is(names, "Test, Test, and Test")
+test('greetGroup splits array of 3 or mote names into string delimited by , and the last name by , and', t => {
+    const names = greetGroup(["Test", "Test", "Test"]);
+    t.is(names, "Test, Test, and Test.")
 })
 test('Oxford Comma Decides how to present last name', t => {
     const x = oxfordComma(true, 'test', 'test')
@@ -114,9 +114,9 @@ test('NormaliseNames parses names separated by , into one array', t => {
  * "Hello, Bob and Charlie, Dianne.".
  */
 test('Greeting escapes " and then ignores the oxford comma', t => {
-    const greeting = greet(["Bob", "\"Charlie, Dianne\""])
-    t.is(greeting, "Hello, Bob and Charlie, Dianne.")
-})
+    const greeting = greet(["Bob", "\"Charlie, Dianne\""]);
+    t.is(greeting, "Hello, Bob and Charlie, Dianne.");
+});
 
 /**
  * Requirement 6
@@ -128,6 +128,22 @@ test('Greeting escapes " and then ignores the oxford comma', t => {
  */
 
 test('Greeting can handle a mix of shouting and regular greetings', t => {
-    const greeting = greet(["Amy", "Brian, Charlotte"])
+    const greeting = greet(["Amy", "BRIAN"])
+    t.is(greeting, "Hello, Amy. AND HELLO BRIAN!")
+});
+
+test('Greeting can handle a mix of shouting and various names', t => {
+    const greeting = greet(["Brian", "AMY"]);
+    t.is(greeting, "Hello, Brian. AND HELLO AMY!")
+});
+
+
+test('Greeting can handle a mix of shouting and various names', t => {
+    const greeting = greet(["AMY", "Brian"]);
+    t.is(greeting, "Hello, Brian. AND HELLO AMY!")
+});
+
+test('Greeting can handle 3 names', t => {
+    const greeting = greet(["Amy", "BRIAN", "Charlotte"]);
     t.is(greeting, "Hello, Amy and Charlotte. AND HELLO BRIAN!")
-})
+});
