@@ -3,12 +3,12 @@
  * @returns {String} Greeting
  */
 function greet(names = "my friend") {
-    if(Array.isArray(names)) {
+    if (Array.isArray(names)) {
         return `Hello, ${greetGroup(names)}`;
     }
-    if(isShouting(names)){
+    if (isShouting(names)) {
         return `HELLO, ${names}!`;
-    }  
+    }
     return `Hello, ${names}.`;
 }
 
@@ -22,32 +22,51 @@ function isShouting(message) {
 }
 
 /**
- * TODO FIX THIS MESS.
- */
-
-/**
  * 
  * @param {Array} names 
  * @returns {String}
  */
 function greetGroup(names) {
     const parsed_names = normaliseNames(names);
-    const lowerCaseNames = parsed_names.filter(name=>!isShouting(name));
-    const quietGreeting = lowerCaseNames.reduce((sum, el, index) => {
-        if(lowerCaseNames.length - 1 === index) {
-            return oxfordComma(lowerCaseNames.length === 2, sum, el);
-        }
-        return `${sum}, ${el}`;
-    }) + '.'
-    if(parsed_names.some(isShouting)) {
-        const upperCaseNames = names.filter(name=>isShouting(name));
-        return `${quietGreeting} AND HELLO ${upperCaseNames}!`
-    }
-    return quietGreeting;
+    return createQuietGreeting(parsed_names) + createLoudGreeting(parsed_names);
+}
 
+/**
+ * 
+ * @param {Array} names 
+ */
+function createLoudGreeting(names) {
+    if (names.some(isShouting)) {
+        return ` AND HELLO ${names.filter(name=>isShouting(name))}!`;
+    }
+    return '';
 }
 
 
+// TODO FIX THIS
+/**
+ * 
+ * @param {Array} names
+ * @returns {String} quietgreeting 
+ */
+function createQuietGreeting(names) {
+    const lowerCaseNames = names.filter(name => !isShouting(name));
+    return lowerCaseNames.reduce((greeting, name, index, lowerCaseNames) => buildCommaList(greeting, name, index, lowerCaseNames)) + '.';
+}
+
+const isLastName = (names, index) => names.length - 1 === index;
+// ISH
+function buildCommaList(greeting, name, index, names) {
+    if (isLastName(names, index)) {
+        const needsOxford = names.length > 2
+        return appendLastName(needsOxford, greeting, name);
+    }
+    return appendName(greeting, name);
+}
+
+function appendName(greeting, name) {
+    return `${greeting}, ${name}`;
+}
 /**
  * 
  * @param {Number} greeting_length
@@ -55,12 +74,15 @@ function greetGroup(names) {
  * @param {String} lastname 
  * @returns {String} parsed
  */
-function oxfordComma(shouldOxford, previous, lastname) {
-    if(shouldOxford) {
-        return `${previous} and ${lastname}`;
+function appendLastName(needsOxford, previous, lastname) {
+    if (needsOxford) {
+        return `${previous}, and ${lastname}`;
     }
-    return `${previous}, and ${lastname}`;
+    return `${previous} and ${lastname}`;
 }
+
+
+// TODO WTF MATE (Exceded wtf per minute limit)
 
 /**
  * 
@@ -69,23 +91,22 @@ function oxfordComma(shouldOxford, previous, lastname) {
  */
 function normaliseNames(names) {
     return names.reduce((greetGroup, name) => {
-        if (name.indexOf('"') !==-1) {
-            greetGroup.push(name.replace(/"/g,''))
-        }
-        else if (name.indexOf(',') !== -1) {
-            greetGroup.push(...name.split(',').map(el=>el.trim()));
-            
+        if (name.indexOf('"') !== -1) {
+            greetGroup.push(name.replace(/"/g, ''))
+        } else if (name.indexOf(',') !== -1) {
+            greetGroup.push(...name.split(',').map(name => name.trim()));
+
         } else {
             greetGroup.push(name)
         }
         return greetGroup
-    },[])
+    }, [])
 }
 
 module.exports = {
     greet,
     isShouting,
     greetGroup,
-    oxfordComma,
+    appendLastName,
     normaliseNames
 };

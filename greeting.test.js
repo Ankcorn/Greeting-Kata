@@ -1,5 +1,5 @@
 const test = require('ava');
-const {greet, isShouting, greetGroup, oxfordComma, normaliseNames} = require('./index');
+const {greet, isShouting, greetGroup, appendLastName, normaliseNames} = require('./index');
 
 /**
  * Requirement 1
@@ -92,11 +92,11 @@ test('greetGroup splits array of 3 or mote names into string delimited by , and 
     t.is(names, "Test, Test, and Test.")
 })
 test('Oxford Comma Decides how to present last name', t => {
-    const x = oxfordComma(true, 'test', 'test')
+    const x = appendLastName(false, 'test', 'test')
     t.is(x,"test and test");
 });
 test('Oxford Comma Decides how to present last name', t => {
-    const x = oxfordComma(false, 'test', 'test')
+    const x = appendLastName(true, 'test', 'test')
     t.is(x,"test, and test");
 })
 test('NormaliseNames parses names separated by , into one array', t => {

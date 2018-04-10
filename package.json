@@ -7,9 +7,10 @@
     "ava": "0.25.0"
   },
   "scripts": {
-    "test": "nyc ava"
+    "test": "ava --watch"
   },
   "devDependencies": {
-    "nyc": "11.4.1"
+    "nyc": "11.4.1",
+    "tap-nyan": "^1.1.0"
   }
 }
